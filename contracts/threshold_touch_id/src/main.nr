@@ -1,5 +1,20 @@
 contract Main {
-    internal fn double(x: Field) -> pub Field { x * 2 }
-    fn triple(x: Field) -> pub Field { x * 3 }
-    fn quadruple(x: Field) -> pub Field { double(double(x)) }
+
+    use dep::aztec::context::Context;
+
+    struct Storage {
+        number: Field,
+    }
+    
+    impl Storage {
+        fn init(_ctx: Context) -> pub Self {
+            Storage {
+                number: 1
+            }
+        }
+    }
+
+    unconstrained fn get_storage() -> pub Field {
+        storage.number
+    }
 }
