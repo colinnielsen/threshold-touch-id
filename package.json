@@ -12,8 +12,12 @@
   },
   "dependencies": {
     "@aztec/aztec.js": "latest",
+    "@aztec/noir-compiler": "^0.8.9",
     "@aztec/noir-contracts": "latest",
     "@types/node": "^20.6.3",
     "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5"
   }
 }
