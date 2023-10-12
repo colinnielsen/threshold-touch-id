@@ -5,15 +5,18 @@
   "type": "module",
   "scripts": {
     "build": "yarn clean && tsc -b",
-    "build:contracts": "aztec-cli compile contracts/threshold_touch_id",
+    "compile": "aztec-cli compile src/contracts",
+    "deploy": "yarn compile && aztec-cli deploy src/contracts/target/Main.json",
     "build:dev": "tsc -b --watch",
     "clean": "rm -rf ./dest tsconfig.tsbuildinfo",
     "start": "yarn build && DEBUG='token' node ./dest/index.js"
   },
   "dependencies": {
     "@aztec/aztec.js": "latest",
+    "@aztec/foundation": "^0.8.9",
     "@aztec/noir-compiler": "^0.8.9",
     "@aztec/noir-contracts": "latest",
+    "@aztec/types": "^0.8.9",
     "@types/node": "^20.6.3",
     "typescript": "^5.2.2"
   },

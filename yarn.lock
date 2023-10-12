@@ -56,7 +56,7 @@
     tslib "^2.4.0"
     viem "^1.2.5"
 
-"@aztec/foundation@0.8.9":
+"@aztec/foundation@0.8.9", "@aztec/foundation@^0.8.9":
   version "0.8.9"
   resolved "https://registry.yarnpkg.com/@aztec/foundation/-/foundation-0.8.9.tgz#3d554f44a831d9ac65b68f14e649c20969b155d3"
   integrity sha512-tYPvWTOXmFgjFPawRL4eIzSrrN42Q8EGOUFzqVW1Cf2BjN44HhV9izKiiEmK7OIu0Fre3KJ5Kr2eAbif2OvSaw==
@@ -104,7 +104,7 @@
     lodash.omit "^4.5.0"
     tslib "^2.4.0"
 
-"@aztec/types@0.8.9":
+"@aztec/types@0.8.9", "@aztec/types@^0.8.9":
   version "0.8.9"
   resolved "https://registry.yarnpkg.com/@aztec/types/-/types-0.8.9.tgz#b3650189b60de4622e1555f60f5eda31a7cf3ef9"
   integrity sha512-gMTVrSH7ijcIDZFJobSpsE76f60UfN7adT0XXmCmQHAdoV5M1rFHAV1X1fmEAYt1nvQ6/b48WSb8FdcDnEDnUA==
