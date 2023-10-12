@@ -43,6 +43,7 @@ contract TouchIdContract {
 
     #[contract_library_method]
     fn is_valid_impl(context: &mut PrivateContext, message_hash: Field) -> pub bool {
+        // TODO: touch id here 
         // // docs:start:entrypoint
         // // Load public key from storage
         // let storage = Storage::init(Context::private(context));
