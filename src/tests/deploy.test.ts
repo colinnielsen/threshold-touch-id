@@ -1,23 +1,23 @@
-import {
-  AccountWallet,
-  Contract,
-  PXE,
-  createPXEClient,
-  getSandboxAccountsWallets,
-} from "@aztec/aztec.js";
-import { TouchIdContractContract } from "./contracts/types/TouchIdContract.ts";
-
-const { PXE_URL = "http://localhost:8080" } = process.env;
+import { AccountWallet, Contract, createAccount } from "@aztec/aztec.js";
+import { createSandbox } from "@aztec/aztec-sandbox";
+import { TouchIdContractContract } from "../contracts/types/TouchIdContract.js";
 
 describe("private token contract", () => {
-  let pxe: PXE;
+  let pxe: any;
+  let stop: VoidFunction;
   let owner: AccountWallet;
   let recipient: AccountWallet;
   let contract: Contract;
 
+  beforeAll(async () => {
+    ({ pxe, stop } = await createSandbox());
+  });
+
   beforeEach(async () => {
-    pxe = createPXEClient(PXE_URL);
-    [owner, recipient] = await getSandboxAccountsWallets(pxe);
+    [owner, recipient] = await Promise.all([
+      createAccount(pxe),
+      createAccount(pxe),
+    ]);
 
     const deploymentTx = await TouchIdContractContract.deploy(pxe, [1], [2]);
   }, 30_000);

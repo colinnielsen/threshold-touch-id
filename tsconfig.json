@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "dest",
-    "rootDir": "src",
     "target": "es2020",
     "lib": ["dom", "esnext", "es2017.object"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
-    // "declaration": true,
-    "noEmit": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "downlevelIteration": true,
@@ -16,10 +15,10 @@
     "declarationMap": true,
     "importHelpers": true,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
     "composite": true,
     "skipLibCheck": true
   },
   "references": [],
+  "files": ["node_modules/@types/jest/index.d.ts"],
   "include": ["src/**/*", "src/**/*.json"]
 }

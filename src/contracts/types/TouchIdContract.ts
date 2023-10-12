@@ -65,6 +65,9 @@ export class TouchIdContractContract extends ContractBase {
   /** Type-safe wrappers for the public methods exposed by the contract. */
   public methods!: {
     
+    /** entrypoint(payload: struct) */
+    entrypoint: ((payload: { function_calls: { args_hash: FieldLike, function_selector: FieldLike, target_address: FieldLike, is_public: boolean }[], nonce: FieldLike }) => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
+
     /** get_keys() */
     get_keys: (() => ContractFunctionInteraction) & Pick<ContractMethod, 'selector'>;
   };
