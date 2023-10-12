@@ -37,7 +37,7 @@ contract TouchIdContract {
 
     #[aztec(private)]
     fn entrypoint(payload: pub EntrypointPayload) {
-        let actions = AccountActions::private(&mut context, 2, is_valid_impl);
+        let actions = AccountActions::private(&mut context, 3, is_valid_impl);
         actions.entrypoint(payload);
     }
 
