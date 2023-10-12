@@ -1,9 +1,15 @@
 contract TouchIdContract {
+    use dep::std;
     use dep::std::option::Option;
 
     use dep::aztec::{
-        context::Context,
+        context::{Context, PrivateContext},
         state_vars::public_state::PublicState,
+    };
+    use dep::authwit::{
+        entrypoint::{ EntrypointPayload, ENTRYPOINT_PAYLOAD_SIZE },
+        account::AccountActions,
+        auth_witness::get_auth_witness,
     };
 
     struct Storage {
@@ -27,6 +33,32 @@ contract TouchIdContract {
 
         x = pub_key_x;
         y = pub_key_y;
+    }
+
+    #[aztec(private)]
+    fn entrypoint(payload: pub EntrypointPayload) {
+        let actions = AccountActions::private(&mut context, 2, is_valid_impl);
+        actions.entrypoint(payload);
+    }
+
+    #[contract_library_method]
+    fn is_valid_impl(context: &mut PrivateContext, message_hash: Field) -> pub bool {
+        // // docs:start:entrypoint
+        // // Load public key from storage
+        // let storage = Storage::init(Context::private(context));
+        // // docs:start:get_note
+        // let public_key = storage.signing_public_key.get_note();
+        // // docs:end:get_note
+        // // Load auth witness
+        // let witness: [Field; 64] = get_auth_witness(message_hash);
+        // let mut signature: [u8; 64] = [0; 64];
+        // for i in 0..64 { signature[i] = witness[i] as u8; }
+
+        // // Verify signature of the payload bytes
+        // let verification = std::schnorr::verify_signature(public_key.x, public_key.y, signature, message_hash.to_be_bytes(32));
+        // assert(verification == true);
+        // // docs:end:entrypoint
+        true
     }
 
     /**
