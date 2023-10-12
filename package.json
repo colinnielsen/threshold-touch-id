@@ -4,8 +4,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "yarn clean && tsc -b",
+    "build": "yarn clean && tsc -b && yarn compile && yarn codegenaztec-cli generate-noir-interface",
     "compile": "aztec-cli compile src/contracts",
+    "codegen": "aztec-cli generate-typescript src/contracts",
+    "interfaces": "aztec-cli generate-noir-interface src/contracts",
     "deploy": "yarn compile && aztec-cli deploy src/contracts/target/Main.json",
     "build:dev": "tsc -b --watch",
     "clean": "rm -rf ./dest tsconfig.tsbuildinfo",
@@ -13,10 +15,10 @@
   },
   "dependencies": {
     "@aztec/aztec.js": "latest",
-    "@aztec/foundation": "^0.8.9",
-    "@aztec/noir-compiler": "^0.8.9",
+    "@aztec/foundation": "latest",
+    "@aztec/noir-compiler": "latest",
     "@aztec/noir-contracts": "latest",
-    "@aztec/types": "^0.8.9",
+    "@aztec/types": "latest",
     "@types/node": "^20.6.3",
     "typescript": "^5.2.2"
   },

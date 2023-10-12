@@ -1,6 +1,10 @@
 contract TouchIdContract {
-    use dep::std;
-    use dep::aztec::context::Context;
+    use dep::std::option::Option;
+
+    use dep::aztec::{
+        context::Context,
+        state_vars::public_state::PublicState,
+    };
 
     struct Storage {
         pub_key_x: [u8; 32],

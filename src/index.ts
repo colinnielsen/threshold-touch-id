@@ -1,24 +1,11 @@
 import {
   AccountWallet,
   Contract,
-  Fr,
-  NotePreimage,
   PXE,
-  computeMessageSecretHash,
-  createDebugLogger,
   createPXEClient,
   getSandboxAccountsWallets,
-  getSchnorrAccount,
-  waitForSandbox,
 } from "@aztec/aztec.js";
-import { GrumpkinScalar } from "@aztec/circuits.js";
-import { readFileSync, writeFileSync } from "fs";
-import {
-  compileUsingNargo,
-  generateTypescriptContractInterface,
-} from "@aztec/noir-compiler";
-
-import { format } from "util";
+import { TouchIdContractContract } from "./contracts/types/TouchIdContract.ts";
 
 const { PXE_URL = "http://localhost:8080" } = process.env;
 
@@ -32,12 +19,7 @@ describe("private token contract", () => {
     pxe = createPXEClient(PXE_URL);
     [owner, recipient] = await getSandboxAccountsWallets(pxe);
 
-    const compiled = await compileUsingNargo("../contracts/");
-    const abiImportPath = "../contracts/threshold_touch_id/target/Main.json";
-    writeFileSync(
-      "./Main.ts",
-      generateTypescriptContractInterface(compiled[0], abiImportPath)
-    );
+    const deploymentTx = await TouchIdContractContract.deploy(pxe, [1], [2]);
   }, 30_000);
 
   // it("increases recipient funds on mint", async () => {
@@ -74,4 +56,4 @@ describe("private token contract", () => {
   // }, 30_000);
 });
 
-await main();
+// await main();
