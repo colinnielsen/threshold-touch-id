@@ -19,7 +19,7 @@
     "rootDir": "./src"
   },
   "dependencies": {
-    "@aztec/aztec-sandbox": "^0.8.10",
+    "@aztec/aztec-sandbox": "latest",
     "@aztec/aztec.js": "latest",
     "@aztec/foundation": "latest",
     "@aztec/noir-compiler": "latest",
