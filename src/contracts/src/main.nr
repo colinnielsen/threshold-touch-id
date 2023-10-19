@@ -11,6 +11,7 @@ contract TouchIdContract {
         account::AccountActions,
         auth_witness::get_auth_witness,
     };
+    use crate::public_key_note::{PublicKeyNote, PublicKeyNoteMethods, PUBLIC_KEY_NOTE_LEN};
 
     struct Storage {
         pub_key_x: [u8; 32],
