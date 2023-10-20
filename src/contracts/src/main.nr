@@ -1,3 +1,5 @@
+mod public_key_note;
+
 contract TouchIdContract {
     use dep::std;
     use dep::std::option::Option;
