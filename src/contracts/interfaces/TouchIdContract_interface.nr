@@ -33,6 +33,74 @@ impl TouchIdContractPrivateContextInterface {
     self,
     context: &mut PrivateContext,
     payload: PayloadEntrypointStruct
+  ) {
+    let mut serialized_args = [0; 17];
+    serialized_args[0] = payload.function_calls[0].args_hash;
+    serialized_args[1] = payload.function_calls[0].function_selector;
+    serialized_args[2] = payload.function_calls[0].target_address;
+    serialized_args[3] = payload.function_calls[0].is_public as Field;
+    serialized_args[4] = payload.function_calls[1].args_hash;
+    serialized_args[5] = payload.function_calls[1].function_selector;
+    serialized_args[6] = payload.function_calls[1].target_address;
+    serialized_args[7] = payload.function_calls[1].is_public as Field;
+    serialized_args[8] = payload.function_calls[2].args_hash;
+    serialized_args[9] = payload.function_calls[2].function_selector;
+    serialized_args[10] = payload.function_calls[2].target_address;
+    serialized_args[11] = payload.function_calls[2].is_public as Field;
+    serialized_args[12] = payload.function_calls[3].args_hash;
+    serialized_args[13] = payload.function_calls[3].function_selector;
+    serialized_args[14] = payload.function_calls[3].target_address;
+    serialized_args[15] = payload.function_calls[3].is_public as Field;
+    serialized_args[16] = payload.nonce;
+
+    context.call_public_function(self.address, 0x99fd6079, serialized_args)
+  }
+  
+
+  pub fn is_valid(
+    self,
+    context: &mut PrivateContext,
+    message_hash: Field
+  ) -> [Field; RETURN_VALUES_LENGTH] {
+    let mut serialized_args = [0; 1];
+    serialized_args[0] = message_hash;
+
+    context.call_private_function(self.address, 0xe86ab4ff, serialized_args)
+  }
+  
+
+  pub fn is_valid_public(
+    self,
+    context: &mut PrivateContext,
+    message_hash: Field
+  ) {
+    let mut serialized_args = [0; 1];
+    serialized_args[0] = message_hash;
+
+    context.call_public_function(self.address, 0xf3661153, serialized_args)
+  }
+  
+}
+  
+  
+
+
+// Interface for calling TouchIdContract functions from a public context
+struct TouchIdContractPublicContextInterface {
+  address: Field,
+}
+
+impl TouchIdContractPublicContextInterface {
+  pub fn at(address: Field) -> Self {
+      Self {
+          address,
+      }
+  }
+  
+  pub fn entrypoint(
+    self,
+    context: PublicContext,
+    payload: PayloadEntrypointStruct
   ) -> [Field; RETURN_VALUES_LENGTH] {
     let mut serialized_args = [0; 17];
     serialized_args[0] = payload.function_calls[0].args_hash;
@@ -53,24 +121,19 @@ impl TouchIdContractPrivateContextInterface {
     serialized_args[15] = payload.function_calls[3].is_public as Field;
     serialized_args[16] = payload.nonce;
 
-    context.call_private_function(self.address, 0x99fd6079, serialized_args)
+    context.call_public_function(self.address, 0x99fd6079, serialized_args)
   }
   
-}
-  
-  
 
+  pub fn is_valid_public(
+    self,
+    context: PublicContext,
+    message_hash: Field
+  ) -> [Field; RETURN_VALUES_LENGTH] {
+    let mut serialized_args = [0; 1];
+    serialized_args[0] = message_hash;
 
-// Interface for calling TouchIdContract functions from a public context
-struct TouchIdContractPublicContextInterface {
-  address: Field,
-}
-
-impl TouchIdContractPublicContextInterface {
-  pub fn at(address: Field) -> Self {
-      Self {
-          address,
-      }
+    context.call_public_function(self.address, 0xf3661153, serialized_args)
   }
   
 }
