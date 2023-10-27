@@ -17,22 +17,32 @@ use dep::aztec::{
 global SPENDING_POLICY_SERIALIZED_LEN: Field = 3;
 
 struct SpendingPolicy {
-    token_address: Field,
-    amount: Field,
+    token: AztecAddress,
+    limit: u120,
     // the function signature of whatever the "balanceOf" function is on the token
     balance_of_sig: Field
+}
+
+impl SpendingPolicy {
+    pub fn empty() -> Self {
+        SpendingPolicy {
+            token: AztecAddress::new(0),
+            limit: 0,
+            balance_of_sig: 0
+        }
+    }
 }
 
 fn deserializeSP (fields: [Field; SPENDING_POLICY_SERIALIZED_LEN]) -> SpendingPolicy {
     SpendingPolicy {
         token: AztecAddress::new(fields[0]),
-        amount: fields[1],
+        limit: fields[1] as u120,
         balance_of_sig: fields[2]
     }
 }
 
 fn serializeSP (spending_policy: SpendingPolicy) -> [Field; SPENDING_POLICY_SERIALIZED_LEN] {
-    [spending_policy.token.address, spending_policy.amount, spending_policy.balance_of_sig]
+    [spending_policy.token.address, spending_policy.limit as Field, spending_policy.balance_of_sig]
 }
 
 global SpendingPolicySerializationMethods = TypeSerializationInterface {
@@ -47,7 +57,7 @@ global SpendingPolicySerializationMethods = TypeSerializationInterface {
 // global SPENDING_POLICY_NOTE_LEN: Field = 3;
 
 // struct SpendingPolicy {
-//     amount: Field,
+//     limit: Field,
 //     // the function signature of whatever the "balanceOf" function is on the token
 //     balance_of_sig: Field,
 //     owner: Field,
@@ -55,9 +65,9 @@ global SpendingPolicySerializationMethods = TypeSerializationInterface {
 // }
 
 // impl SpendingPolicy {
-//     pub fn new(amount: Field, balance_of_sig: Field, owner: Field) -> Self {
+//     pub fn new(limit: Field, balance_of_sig: Field, owner: Field) -> Self {
 //         SpendingPolicy {
-//             amount,
+//             limit,
 //             balance_of_sig,
 //             owner,
 //             header: NoteHeader::empty(),
@@ -65,7 +75,7 @@ global SpendingPolicySerializationMethods = TypeSerializationInterface {
 //     }
 
 //     pub fn serialize(self) -> [Field; SPENDING_POLICY_NOTE_LEN] {
-//         [self.amount, self.balance_of_sig, self.owner]
+//         [self.limit, self.balance_of_sig, self.owner]
 //     }
 
 //     pub fn set_header(&mut self, new_header: NoteHeader) {
@@ -96,12 +106,12 @@ global SpendingPolicySerializationMethods = TypeSerializationInterface {
 // }
 
 // fn serialize(note: SpendingPolicy) -> [Field; SPENDING_POLICY_NOTE_LEN] {
-//     [note.amount, note.balance_of_sig, note.owner]
+//     [note.limit, note.balance_of_sig, note.owner]
 // }
 
 // fn deserialize(preimage: [Field; SPENDING_POLICY_NOTE_LEN]) -> SpendingPolicy {
 //     SpendingPolicy {
-//         amount: preimage[0],
+//         limit: preimage[0],
 //         balance_of_sig: preimage[1],
 //         owner: preimage[2],
 //         header: NoteHeader::empty(),

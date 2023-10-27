@@ -9,7 +9,7 @@ contract TouchIdContract {
     use dep::aztec;
     use dep::authwit;
 
-    // use crate::utils;
+    use crate::utils;
     use crate::spending_policy::{SpendingPolicy, SpendingPolicySerializationMethods, SPENDING_POLICY_SERIALIZED_LEN};
     use dep::aztec::state_vars::{map::Map, public_state::PublicState};
 
@@ -37,15 +37,12 @@ contract TouchIdContract {
     global ACCOUNT_ACTIONS_STORAGE_SLOT = 3;
     
     impl Storage {
-        fn init(ctx: aztec::context::Context) -> Self {
+        fn init(_ctx: aztec::context::Context) -> Self {
             Storage {
                 pub_key_x: [0; 32],
                 pub_key_y: [0; 32],
-                spendingLimit: SpendingPolicy {
-                    token: 0,
-                    amount: 0,
-                    balance_of_sig: 0
-                }
+                spending_policy: SpendingPolicy::empty()
+            }
         }
     }
 
@@ -84,18 +81,38 @@ contract TouchIdContract {
     * FUNCTIONS
     */
 
-    // // TODO: does this need to be private?
-    // #[aztec(private)]
-    // fn entrypoint(payload: pub authwit::entrypoint::EntrypointPayload) {
-    //     let policy: SpendingPolicy = storage.spending_policy;
-    //     let mut balance_before: Field = 0;
+    #[aztec(private)]
+    fn entrypoint(payload: pub authwit::entrypoint::EntrypointPayload) {
+        let policy: SpendingPolicy = storage.spending_policy;
+        let mut balance_before: Field = 0;
 
-    //     for call in payload.function_calls {
-    //         // if call.target_address
-    //     }
-    //     let actions = authwit::account::AccountActions::private(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
-    //     actions.entrypoint(payload);
-    // }
+        for call in payload.function_calls {
+            if call.target_address == policy.token.address {
+                balance_before = context.call_public_function(
+                    call.target_address,
+                    policy.balance_of_sig,
+                    [self.address]
+                );
+            }
+        }
+
+        let actions = authwit::account::AccountActions::private(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
+        actions.entrypoint(payload);
+
+        if balance_before != 0 {
+            let balance_after: Field = context.call_public_function(
+                    call.target_address,
+                    policy.balance_of_sig,
+                    [self.address]
+                );
+            let before_int = balance_before as u120;
+            let after_int = balance_after as u120;
+
+            if before_int < after_int {
+                assert(before_int - after_int < policy.limit);
+            }
+        }
+    }
 
     /// @returns the IS_VALID_SELECTOR hash if valid
     #[aztec(private)]
