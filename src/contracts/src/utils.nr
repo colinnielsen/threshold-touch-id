@@ -17,5 +17,4 @@ pub fn _callInitialize(
 // pub fn _balanceBefore(
 //     context: &mut aztec::context::PrivateContext
 // ) {
-    
 // }

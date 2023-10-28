@@ -68,12 +68,7 @@ impl PublicKeyNote {
 }
 
 fn deserialize(preimage: [Field; PUBLIC_KEY_NOTE_LEN]) -> PublicKeyNote {
-    PublicKeyNote {
-        x: preimage[0],
-        y: preimage[1],
-        owner: preimage[2],
-        header: NoteHeader::empty(),
-    }
+    PublicKeyNote { x: preimage[0], y: preimage[1], owner: preimage[2], header: NoteHeader::empty() }
 }
 
 fn serialize(note: PublicKeyNote) -> [Field; PUBLIC_KEY_NOTE_LEN] {
@@ -82,7 +77,7 @@ fn serialize(note: PublicKeyNote) -> [Field; PUBLIC_KEY_NOTE_LEN] {
 
 fn compute_note_hash(note: PublicKeyNote) -> Field {
     // TODO(#1205) Should use a non-zero generator index.
-    pedersen_hash(note.serialize(),0)
+    pedersen_hash(note.serialize(), 0)
 }
 
 fn compute_nullifier(note: PublicKeyNote) -> Field {

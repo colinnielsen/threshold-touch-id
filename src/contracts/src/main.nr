@@ -83,6 +83,12 @@ contract TouchIdContract {
 
     #[aztec(private)]
     fn entrypoint(payload: pub authwit::entrypoint::EntrypointPayload) {
+        let selector = aztec::selector::compute_selector("entrypoint_public((Field,Field,Field,Field))");
+        context.call_public_function(context.this_address(), selector, payload.serialize());
+    }
+
+    #[aztec(public)]
+    internal fn entrypoint_public(payload: authwit::entrypoint::EntrypointPayload) {
         let policy: SpendingPolicy = storage.spending_policy;
         let mut balance_before: Field = 0;
 
@@ -91,20 +97,20 @@ contract TouchIdContract {
                 balance_before = context.call_public_function(
                     call.target_address,
                     policy.balance_of_sig,
-                    [self.address]
-                );
+                    [context.this_address()]
+                )[0];
             }
         }
 
-        let actions = authwit::account::AccountActions::private(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
+        let actions = authwit::account::AccountActions::public(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
         actions.entrypoint(payload);
 
         if balance_before != 0 {
             let balance_after: Field = context.call_public_function(
-                    call.target_address,
+                    policy.token.address,
                     policy.balance_of_sig,
-                    [self.address]
-                );
+                    [context.this_address()]
+                )[0];
             let before_int = balance_before as u120;
             let after_int = balance_after as u120;
 
