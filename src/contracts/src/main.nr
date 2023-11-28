@@ -49,6 +49,11 @@ contract SpendingLimitWallet {
         }
     }
 
+    /**
+    * @dev ideally we'd use a spending policy mapping and check each target_address in the EntrypointPayload,
+    *   However, there's a strict upperbound on contract reads, which limits the viability of this pattern
+    */
+
     // Map<PublicState<SpendingPolicy, SPENDING_POLICY_SERIALIZED_LEN>>,
     //     Map::new(
     //         ctx,
