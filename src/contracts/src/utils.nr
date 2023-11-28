@@ -13,8 +13,3 @@ pub fn _callInitialize(
 
     context.call_public_function(context.this_address(), 0x598d0c9b, serialized_args);
 }
-
-// pub fn _balanceBefore(
-//     context: &mut aztec::context::PrivateContext
-// ) {
-// }

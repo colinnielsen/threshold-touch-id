@@ -1,7 +1,10 @@
 mod utils;
 mod spending_policy;
 
-contract TouchIdContract {
+// global pub_x: Field = 0x0ede3d33c920df8fdf43f3e39ed38b0882c25b056620ef52fd016fe811aa2443;
+// global pub_y: Field = 0x29155934ffaa105323695b5f91faadd84acc21f4a8bda2fad760f992d692bc7f;
+
+contract SpendingLimitWallet {
     /**
     * DEPENDENCIES
     */
@@ -18,9 +21,9 @@ contract TouchIdContract {
     */
     struct Storage {
         // slot 1
-        pub_key_x: [u8; 32],
+        pub_key_x: Field,
         // slot 2
-        pub_key_y: [u8; 32],
+        pub_key_y: Field,
         // slot 3 see ACCOUNT_ACTIONS_STORAGE_SLOT:
         // action_witnesses: Map<bool> (managed by dep::authwit)
         // slot 4
@@ -39,8 +42,8 @@ contract TouchIdContract {
     impl Storage {
         fn init(_ctx: aztec::context::Context) -> Self {
             Storage {
-                pub_key_x: [0; 32],
-                pub_key_y: [0; 32],
+                pub_key_x: 0,
+                pub_key_y: 0,
                 spending_policy: SpendingPolicy::empty()
             }
         }
@@ -69,7 +72,7 @@ contract TouchIdContract {
     }
 
     #[aztec(public)]
-    internal fn _initialize(pub_key_x: [u8; 32], pub_key_y: [u8; 32]) {
+    internal fn _initialize(pub_key_x: Field, pub_key_y: Field) {
         let mut storage_x = storage.pub_key_x;
         let mut storage_y = storage.pub_key_y;
 
@@ -111,42 +114,32 @@ contract TouchIdContract {
                     policy.balance_of_sig,
                     [context.this_address()]
                 )[0];
-            let before_int = balance_before as u120;
-            let after_int = balance_after as u120;
 
-            if before_int < after_int {
-                assert(before_int - after_int < policy.limit);
+            if (balance_after as u120) < (balance_before as u120) {
+                assert(balance_after as u120 - balance_before as u120 < policy.limit as u120);
             }
         }
     }
 
-    /// @returns the IS_VALID_SELECTOR hash if valid
-    #[aztec(private)]
-    fn is_valid(message_hash: Field) -> Field {
-        let actions = authwit::account::AccountActions::private(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
-        actions.is_valid_public(message_hash)
-    }
-
-    /// @returns the IS_VALID_SELECTOR hash if valid
-    #[aztec(public)]
-    fn is_valid_public(message_hash: Field) -> Field {
-        let actions = authwit::account::AccountActions::public(&mut context, ACCOUNT_ACTIONS_STORAGE_SLOT, is_valid_impl);
-        actions.is_valid_public(message_hash)
-    }
-
     #[contract_library_method]
     fn is_valid_impl(context: &mut aztec::context::PrivateContext, message_hash: Field) -> pub bool {
-        // let storage = Storage::init(aztec::context::Context::private(context));
+        let storage = Storage::init(aztec::context::Context::private(context));
 
-        // let public_key_x = storage.pub_key_x;
-        // let public_key_y = storage.pub_key_y;
+        let public_key_x = storage.pub_key_x;
+        let public_key_y = storage.pub_key_y;
 
-        // let witness: [Field; 64] = authwit::auth_witness::get_auth_witness(message_hash);
-        // let mut signature: [u8; 64] = [0; 64];
-        // for i in 0..64 { signature[i] = witness[i] as u8; }
+        let witness: [Field; 64] = authwit::auth_witness::get_auth_witness(message_hash);
+        let mut signature: [u8; 64] = [0; 64];
+        for i in 0..64 { signature[i] = witness[i] as u8; }
 
-        // let verification = std::ecdsa_secp256r1::verify_signature(public_key_x, public_key_y, signature, message_hash.to_be_bytes(32));
-        // assert(verification == true);
+        let verification = std::schnorr::verify_signature(
+            public_key_x,
+            public_key_y,
+            signature,
+            message_hash.to_be_bytes(32)
+        );
+
+        assert(verification == true);
 
         true
     }
@@ -156,7 +149,7 @@ contract TouchIdContract {
     */
 
     /// @dev return the pub key x,y as a tuple
-    unconstrained fn get_keys() -> ([u8; 32], [u8; 32]) {
+    unconstrained fn get_keys() -> (Field, Field) {
         (storage.pub_key_x, storage.pub_key_y)
     }
 
