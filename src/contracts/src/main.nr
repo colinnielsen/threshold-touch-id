@@ -117,7 +117,7 @@ contract SpendingLimitWallet {
 
             if (balance_after as u120) < (balance_before as u120) {
                 if balance_after as u120 - balance_before as u120 < policy.limit as u120 {
-                    assert(false);
+                    assert(false); // revert
                     // todo: second signature
                 }
             }
